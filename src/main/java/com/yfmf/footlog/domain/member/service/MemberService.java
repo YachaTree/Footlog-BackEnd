@@ -46,7 +46,7 @@ public class MemberService {
     private final JWTTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
-    /*
+    /**
         기본 회원 가입
      */
     @Transactional
@@ -90,7 +90,9 @@ public class MemberService {
         return authTokenDTO; // 여기에서는 Access Token만 클라이언트에 응답
     }
 
-    // 쿠키에 토큰 추가
+    /**
+     * 쿠키에 토큰 추가
+     */
     private void addTokenToCookie(HttpServletResponse response, String tokenName, String tokenValue) {
         Cookie cookie = new Cookie(tokenName, tokenValue);
         cookie.setHttpOnly(true);  // JavaScript에서 쿠키 접근을 차단
@@ -101,7 +103,11 @@ public class MemberService {
         response.addCookie(cookie);
     }
 
-    // 비밀번호 확인
+    /** 비밀번호 확인
+     *
+     * @param rawPassword
+     * @param encodedPassword
+     */
     private void checkValidPassword(String rawPassword, String encodedPassword) {
 
         log.info("{} {}", rawPassword, encodedPassword);
@@ -117,7 +123,11 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
-    // 회원 생성
+    /** 회원 생성
+     *
+     * @param requestDTO
+     * @return
+     */
     protected Member newMember(MemberRequestDTO.signUpDTO requestDTO) {
         return Member.builder()
                 .name(requestDTO.name())
@@ -129,7 +139,13 @@ public class MemberService {
                 .build();
     }
 
-    // 토큰 발급
+    /** 토큰 발급
+     *
+     * @param email
+     * @param password
+     * @param httpServletRequest
+     * @return
+     */
     protected MemberResponseDTO.authTokenDTO getAuthTokenDTO(String email, String password, HttpServletRequest httpServletRequest) {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
@@ -149,7 +165,11 @@ public class MemberService {
     }
 
 
-    // 토큰 재발급
+    /** 토큰 재발급
+     *
+     * @param httpServletRequest
+     * @return
+     */
     public MemberResponseDTO.authTokenDTO reissueToken(HttpServletRequest httpServletRequest) {
 
         // Request 쿠키에서 Refresh Token 추출
@@ -195,7 +215,7 @@ public class MemberService {
     }
 
 
-    /*
+    /**
         로그아웃
      */
     public void logout(HttpServletRequest httpServletRequest) {
@@ -218,6 +238,10 @@ public class MemberService {
         log.info("로그아웃 성공 - 사용자 ID: {}", userId);  // 성공적인 로그아웃 후 기록
     }
 
+    /**
+     * 전체회원조회
+     * @return
+     */
     public List<MemberResponseDTO.MemberInfoDTO> getAllMembers() {
         List<Member> members = memberRepository.findAll();
 
@@ -231,5 +255,16 @@ public class MemberService {
                         member.getAuthority())
                 )
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 회원삭제
+     */
+    @Transactional
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.MEMBER_NOT_FOUND, "존재하지 않는 회원입니다."));
+
+        memberRepository.deleteById(memberId);
     }
 }
