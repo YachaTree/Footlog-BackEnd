@@ -50,7 +50,13 @@ public class JWTTokenProvider {
     // 권한 정보를 추출하는 공통 메서드
     private String extractAuthorities(Collection<? extends GrantedAuthority> grantedAuthorities) {
         return grantedAuthorities.stream()
-                .map(GrantedAuthority::getAuthority)
+                .map(authority -> {
+                    String role = authority.getAuthority();
+                    if (!role.startsWith("ROLE_")) {
+                        return "ROLE_" + role; // ROLE_ 접두사 없을 때만 추가
+                    }
+                    return role; // 이미 ROLE_가 있을 경우 그대로 반환
+                })
                 .collect(Collectors.joining(","));
     }
 
@@ -127,6 +133,7 @@ public class JWTTokenProvider {
         }
     }
 
+    // 토큰에서 권한 정보를 추출하고, 권한 문자열을 다루는 부분 수정
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
         String authoritiesClaim = claims.get(AUTHORITIES_KEY, String.class);
@@ -134,15 +141,17 @@ public class JWTTokenProvider {
             throw new RuntimeException("권한 정보가 없는 Token 입니다.");
         }
 
-        Authority authorityEnum = Authority.valueOf(authoritiesClaim);
+        // authoritiesClaim에서 권한을 추출하고 SimpleGrantedAuthority로 변환
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(authoritiesClaim.split(","))
+                .map(SimpleGrantedAuthority::new) // SimpleGrantedAuthority에 권한 추가
+                .collect(Collectors.toList());
 
         String email = claims.getSubject();
         Long userId = claims.get("userId", Long.class);
         String name = claims.get("name", String.class);
 
-        LoginedInfo loginedInfo = new LoginedInfo(userId, name, email, authorityEnum);
+        LoginedInfo loginedInfo = new LoginedInfo(userId, name, email, Authority.ROLE_USER); // 기본 권한 부여
 
-        Collection<? extends GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority(authoritiesClaim));
         return new UsernamePasswordAuthenticationToken(loginedInfo, "", authorities);
     }
 

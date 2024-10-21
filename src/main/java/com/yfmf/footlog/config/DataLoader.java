@@ -43,7 +43,7 @@ public class DataLoader {
                         .password(passwordEncoder.encode("password123"))
                         .gender(Gender.MALE)
                         .socialType(SocialType.NONE)
-                        .authority(Authority.USER)
+                        .authority(Authority.ROLE_ADMIN)
                         .build();
 
                 // 회원 데이터 저장

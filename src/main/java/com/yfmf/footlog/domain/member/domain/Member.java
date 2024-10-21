@@ -43,7 +43,7 @@ public class Member extends BaseTimeEntity {
     private SocialType socialType;
 
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("'USER'")
+    @ColumnDefault("'ROLE_USER'")
     private Authority authority;
 
     private LocalDate birth;
