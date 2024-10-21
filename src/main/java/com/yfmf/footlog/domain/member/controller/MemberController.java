@@ -4,6 +4,7 @@ package com.yfmf.footlog.domain.member.controller;
 import com.yfmf.footlog.domain.auth.jwt.JWTTokenProvider;
 import com.yfmf.footlog.domain.auth.refreshToken.service.RefreshTokenService;
 import com.yfmf.footlog.domain.auth.utils.ApiUtils;
+import com.yfmf.footlog.domain.member.dto.MemberDeleteResponseDTO;
 import com.yfmf.footlog.domain.member.dto.MemberRequestDTO;
 import com.yfmf.footlog.domain.member.dto.MemberResponseDTO;
 import com.yfmf.footlog.domain.member.service.MemberService;
@@ -110,11 +111,25 @@ public class MemberController {
     /**
      * 전체회원 조회
      */
-    @Operation(summary = "멤버 전체 조회", description = "등록된 모든 멤버를 조회합니다. (관리자만 가능)")
+    @Operation(summary = "회원 전체 조회", description = "등록된 모든 회원을 조회합니다. (관리자만 가능)")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/members")
     public ResponseEntity<?> getAllMembers() {
         List<MemberResponseDTO.MemberInfoDTO> memberList = memberService.getAllMembers();
         return ResponseEntity.ok().body(ApiUtils.success(memberList));
+    }
+
+    /**
+     * Admin 계정이 회원 삭제
+     * */
+
+    @Operation(summary = "회원 삭제", description = "등록된 멤버를 삭제합니다.(관리자만 가능")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{memberId}/delete")
+    public ResponseEntity<MemberDeleteResponseDTO> deleteMember(@PathVariable Long memberId) {
+        memberService.deleteMember(memberId);
+
+        MemberDeleteResponseDTO response = new MemberDeleteResponseDTO("회원 삭제가 완료되었습니다.", memberId);
+        return ResponseEntity.ok(response);
     }
 }

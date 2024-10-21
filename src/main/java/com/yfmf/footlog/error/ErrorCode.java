@@ -10,6 +10,7 @@ public enum ErrorCode {
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error", "서버에 문제 발생했습니다.", "FOOTLOG-000"),
     /* User 도메인 예외 */
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Not Found Member", "해당 회원은 존재하지 않습니다.", "USER-000"),
     EMPTY_EMAIL_MEMBER(HttpStatus.NOT_FOUND, "Not Found Email", "해당 이메일은 회원 가입 되지 않은 이메일입니다.", "USER-001"),
     SAME_EMAIL(HttpStatus.CONFLICT, "Already Existed", "이미 가입된 이메일입니다.", "USER-002"),
     EMAIL_STRUCTURE(HttpStatus.FORBIDDEN, "Invalid Email Structure", "이메일 형식으로 작성해주세요.", "USER-003"),
