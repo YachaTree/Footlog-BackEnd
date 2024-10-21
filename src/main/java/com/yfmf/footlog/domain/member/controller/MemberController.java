@@ -126,7 +126,7 @@ public class MemberController {
     @Operation(summary = "회원 삭제", description = "등록된 멤버를 삭제합니다.(관리자만 가능")
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{memberId}/delete")
-    public ResponseEntity<MemberDeleteResponseDTO> deleteMember(@PathVariable Long memberId) {
+    public ResponseEntity<MemberDeleteResponseDTO> deleteMember(@PathVariable("memberId") Long memberId) {
         memberService.deleteMember(memberId);
 
         MemberDeleteResponseDTO response = new MemberDeleteResponseDTO("회원 삭제가 완료되었습니다.", memberId);
