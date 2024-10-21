@@ -134,7 +134,7 @@ public class MemberSocialLoginService {
                 .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                 .gender(Gender.fromString(profile.kakaoAccount().gender()))
                 .socialType(SocialType.KAKAO)
-                .authority(Authority.USER)
+                .authority(Authority.ROLE_USER)
                 .build();
 
         memberRepository.save(member);

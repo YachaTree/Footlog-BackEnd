@@ -125,7 +125,7 @@ public class MemberService {
                 .password(passwordEncoder.encode(requestDTO.password()))
                 .gender(Gender.fromString(requestDTO.gender()))
                 .socialType(SocialType.NONE)
-                .authority(Authority.USER)
+                .authority(Authority.ROLE_USER)
                 .build();
     }
 
