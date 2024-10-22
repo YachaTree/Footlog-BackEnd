@@ -174,7 +174,7 @@ public class MatchController {
     @PostMapping("/{matchId}/application")
     public ResponseEntity<MatchResponseDTO> applyForMatch(@PathVariable("matchId") Long matchId,
                                                           @AuthenticationPrincipal LoginedInfo logined,
-                                                          @RequestParam Long enemyClubId) {
+                                                          @RequestParam("enemyClubId") Long enemyClubId) {
 
         if (logined == null) {
             log.error("[MatchController-applyForMatch] 로그인되지 않은 사용자가 매칭 신청 시도.");
